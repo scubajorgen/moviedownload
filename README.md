@@ -2,10 +2,10 @@
 
 ## Introduction
 This is a private application I wrote to enrich the excel sheet in which I maintain my movie collection with data from [The Movie Database](https://www.themoviedb.org/).
-It is rather quick and dirty
+It is rather quick and dirty, not many unit tests.
 
 ## API Key
-You need to provide an API key for The Movie Database in the file apikey.txt
+You need to provide an _API key_ for The Movie Database in the file apikey.txt. For this you need a developer account at The Movie Database. Rever to [the developer pages](https://developers.themoviedb.org/3). The software uses version 3 of the API.
 
 ## Excel file
 An sample excel file is provided. Orange columns are columns you can fill in, the yellow columns are columns the application fills in.
@@ -47,3 +47,10 @@ It processes the example file enclosed.
 Next class diagram shows the classes
 
 ![design](images/design.png)
+
+## License
+Use the software however you like. 
+
+## Disclaimer
+Use the software at your own responsibility or don't use it.
+No support given.
