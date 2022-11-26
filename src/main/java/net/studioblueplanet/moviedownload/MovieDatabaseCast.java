@@ -9,7 +9,7 @@ package net.studioblueplanet.moviedownload;
  *
  * @author jorgen
  */
-public class MovieDatabaseCast
+public class MovieDatabaseCast implements Comparable<MovieDatabaseCast>
 {
     Boolean             adult;
     Integer             gender;
@@ -23,4 +23,28 @@ public class MovieDatabaseCast
     String              character;
     String              credit_id;
     Integer             order;
+    
+    /**
+     * Compare to method based on order, use by sorting methods
+     * @param cast Cast to compare to
+     * @return -1, 0, 1
+     */
+    public int compareTo(MovieDatabaseCast cast)
+    {
+        int returnValue;
+        if (order>cast.order)
+        {
+            returnValue=1;
+        }
+        else if (order<cast.order)
+            {
+                returnValue=-1;
+            }
+
+        else
+        {
+            returnValue=0;
+        }
+        return returnValue;
+    }
 }

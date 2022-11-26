@@ -14,27 +14,30 @@ import java.util.List;
  */
 public class Movie
 {
-    private String          title;
-    private String          titleRetrieved;
-    private String          originalTitle;
-    private String          releaseDate;
-    private Integer         year;
-    private String          folder;
-    private String          overview;
-    private Integer         id;
-    private List<String>    genre;
-    private String          director;
-    private Double          voteAverage;
-    private Integer         voteCount;
-    private Double          popularity;
-    private Double          rating;
-    private String          remark;
-    private String          databaseRemark;
-    private String          mediaType;
+    private static final int        MAXCASTMEMBERS=5;
+    private String                  title;
+    private String                  titleRetrieved;
+    private String                  originalTitle;
+    private String                  releaseDate;
+    private Integer                 year;
+    private String                  folder;
+    private String                  overview;
+    private Integer                 id;
+    private List<String>            genre;
+    private List<String>            cast;
+    private String                  director;
+    private Double                  voteAverage;
+    private Integer                 voteCount;
+    private Double                  popularity;
+    private Double                  rating;
+    private String                  remark;
+    private String                  databaseRemark;
+    private String                  mediaType;
 
     public Movie()
     {
-        genre=new ArrayList<>();
+        genre   =new ArrayList<>();
+        cast    =new ArrayList<>();
     }
 
     public String getTitle()
@@ -125,6 +128,16 @@ public class Movie
     public void setGenre(List<String> genre)
     {
         this.genre = genre;
+    }
+
+    public List<String> getCast()
+    {
+        return cast;
+    }
+
+    public void setCast(List<String> cast)
+    {
+        this.cast = cast;
     }
 
     public String getDirector()
@@ -227,4 +240,29 @@ public class Movie
         }
         return genreString;
     }    
+
+    /**
+     * Return the list of the cast, genres separated by /
+     * @return List of cast as single string
+     */
+    public String getCastString()
+    {
+        String  castString="";
+
+        if (cast!=null)
+        {
+            int i=0;
+            while (i<Math.min(cast.size(), MAXCASTMEMBERS))
+            {
+                if (i>0)
+                {
+                    castString+="\n";
+                }
+                castString+=cast.get(i);
+                i++;
+            }
+        }
+        return castString;
+    }    
+
 }

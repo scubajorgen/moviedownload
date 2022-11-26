@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -138,9 +139,9 @@ public class MovieDatabase
     }
 
     /**
-     * Request the movie genres from the Movie Database
+     * Request the director and cast from the Movie Database
      */
-    private String requestDirector(int movieId)
+    private void requestDirectorAndCast(int movieId, Movie movie)
     {
         String director=null;        
         String url="https://api.themoviedb.org/3/movie/"+movieId+"/credits?api_key="+apiKey;
@@ -159,10 +160,29 @@ public class MovieDatabase
                 {
                     if ("Director".equals(crew.get(i).job))
                     {
-                        director=crew.get(i).name;
+                        movie.setDirector(crew.get(i).name);
                     }
                     i++;
                 }
+                
+                List<MovieDatabaseCast> cast=credits.cast;
+                Collections.sort(cast);
+                List<String> movieCast=movie.getCast();
+                movieCast.clear();
+                if (cast!=null)
+                {
+                    i=0;
+                    while (i<cast.size())
+                    {
+                        MovieDatabaseCast player=cast.get(i);
+                        if("Acting".equals(player.known_for_department))
+                        {
+                            movieCast.add(player.name+" ("+player.character+")");
+                        }
+                        i++;
+                    }
+                }
+
             }
             else
             {
@@ -173,7 +193,6 @@ public class MovieDatabase
         {
             LOGGER.error("Error on database requesting credits: {}", e.getMessage());
         }
-        return director;
     }    
     /**
      * Executes a HTTP request
@@ -282,21 +301,21 @@ public class MovieDatabase
     
     /**
      * Enrich the movie with info from the Movie Database
-     * @param movie Movie to enricht
+     * @param movie Movie to enrich
      */
-    public void enrichMovie(Movie movie)
+    public boolean enrichMovie(Movie movie)
     {
         StringBuffer                response;
         String                      url;
         int                         totalPages;
         int                         page;
         List<MovieDatabaseRecord>   records=new ArrayList<>();
-        MovieDatabasePage           mdPage=null;
+        MovieDatabasePage           mdPage;
         MovieDatabaseRecord         theRecord=null;
+        boolean                     success=false;
         
         totalPages  =1;
         page        =1;
-        url=queryUrl(movie.getTitle(), totalPages);
         try
         {
             Gson g      =new Gson();
@@ -363,14 +382,16 @@ public class MovieDatabase
                     }
                     i++;
                 }
-                movie.setDirector(requestDirector(theRecord.id));
+                requestDirectorAndCast(theRecord.id, movie);
                 LOGGER.info("Movie {} enriched", movie.getTitle());
                 movie.setDatabaseRemark(STATUS_PROCESSED);
+                success=true;
             }
         }
         catch(IOException e)
         {
             LOGGER.error("Error on database request: {}", e.getMessage());
         }
+        return success;
     }
 }

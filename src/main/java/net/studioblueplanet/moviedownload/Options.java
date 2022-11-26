@@ -19,7 +19,7 @@ public class Options
     private static final    String  MOVIEBACKUPFILENAME ="./movies_backup.xlsx";
     public String                   filename            =MOVIEFILENAME;
     public String                   backupFilename      =MOVIEBACKUPFILENAME;
-    public boolean                  forceOverwrite      =false;
+    public boolean                  forceOverwrite      =true;
     public boolean                  processAll          =false;
     
     public static Options argsParser(String[] args)

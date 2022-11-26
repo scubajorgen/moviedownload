@@ -34,17 +34,18 @@ public class Movies
     private static final    int                 CELL_OVERVIEW       =3;
     private static final    int                 CELL_GENRES         =4;
     private static final    int                 CELL_DIRECTOR       =5;
-    private static final    int                 CELL_POPULARITY     =6;
-    private static final    int                 CELL_VOTE_AVERAGE   =7;
-    private static final    int                 CELL_VOTE_COUNT     =8;
-    private static final    int                 CELL_RATING         =9;
-    private static final    int                 CELL_REMARK         =10;
-    private static final    int                 CELL_TITLE_DB       =11;
-    private static final    int                 CELL_ORIGINAL_TITLE =12;
-    private static final    int                 CELL_RELEASE_DATE   =13;
-    private static final    int                 CELL_REMARK_DB      =14;
-    private static final    int                 CELL_IDENTIFIER_DB  =15;
-    private static final    int                 CELL_MEDIA_TYPE     =16;
+    private static final    int                 CELL_CAST           =6;
+    private static final    int                 CELL_POPULARITY     =7;
+    private static final    int                 CELL_VOTE_AVERAGE   =8;
+    private static final    int                 CELL_VOTE_COUNT     =9;
+    private static final    int                 CELL_RATING         =10;
+    private static final    int                 CELL_REMARK         =11;
+    private static final    int                 CELL_TITLE_DB       =12;
+    private static final    int                 CELL_ORIGINAL_TITLE =13;
+    private static final    int                 CELL_RELEASE_DATE   =14;
+    private static final    int                 CELL_REMARK_DB      =15;
+    private static final    int                 CELL_IDENTIFIER_DB  =16;
+    private static final    int                 CELL_MEDIA_TYPE     =17;
 
     private final static    Logger              LOGGER = LogManager.getLogger(Movies.class);
     private final           List<Movie>         movies;
@@ -130,6 +131,16 @@ public class Movies
                 }
                 // Director
                 movie.setDirector((String)getCellValue(row, CELL_DIRECTOR, false));
+                // Cast
+                String castString=(String)getCellValue(row, CELL_CAST, false);
+                if (castString!=null)
+                {
+                    String[] parts=castString.split("\n");
+                    for(String part : parts)
+                    {
+                        movie.getCast().add(part);
+                    }
+                }
                 // Popularity
                 movie.setPopularity((Double)getCellValue(row, CELL_POPULARITY, false));
                 // Vote_average
@@ -222,6 +233,7 @@ public class Movies
             updateCell(row, CELL_TITLE_DB       , movie.getTitleRetrieved() , forceOverwrite);
             updateCell(row, CELL_OVERVIEW       , movie.getOverview()       , forceOverwrite);
             updateCell(row, CELL_DIRECTOR       , movie.getDirector()       , forceOverwrite);
+            updateCell(row, CELL_CAST           , movie.getCastString()     , forceOverwrite);
             updateCell(row, CELL_POPULARITY     , movie.getPopularity()     , forceOverwrite);
             updateCell(row, CELL_VOTE_AVERAGE   , movie.getVoteAverage()    , forceOverwrite);
             updateCell(row, CELL_VOTE_COUNT     , movie.getVoteCount()      , forceOverwrite);
@@ -308,10 +320,12 @@ public class Movies
         int             i;
         MovieDatabase   db;
         Movie           movie;
+        int             enrichCount;
         
         db=MovieDatabase.getInstance();
         
         i=0;
+        enrichCount=0;
         while (i<movies.size())
         {
             movie=movies.get(i);
@@ -319,7 +333,12 @@ public class Movies
             if (!(MovieDatabase.STATUS_PROCESSED.equals(movie.getDatabaseRemark()) || 
                   MovieDatabase.STATUS_NOTUPDATED.equals(movie.getDatabaseRemark())) || processAll)
             {
-                db.enrichMovie(movie);
+                boolean success=db.enrichMovie(movie);
+                if (success)
+                {
+                    enrichCount++;
+                }
+                
             }
             else
             {
@@ -328,6 +347,8 @@ public class Movies
             }
             i++;
         }
+        LOGGER.info("Movies processed {}. Movies successfully enriched {}", movies.size(), enrichCount);
+        LOGGER.info("_______________________________________________________");
     }
     
     /**

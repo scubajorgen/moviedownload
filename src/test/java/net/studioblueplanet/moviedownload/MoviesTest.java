@@ -66,14 +66,12 @@ public class MoviesTest
         assertEquals("Finding themselves at a crossroads in their tumultuous "+
                      "lives, the members of a daftly dysfunctional family "+
                      "struggle to sort out their hopes, fears, and expectations.", movies.get(0).getOverview());
-/*
-        assertEquals("Comedy", movies.get(0).getGenre().get(0));
         assertEquals("Drama", movies.get(0).getGenre().get(1));
-        assertEquals("Romance", movies.get(0).getGenre().get(2));        
         assertEquals(3, movies.get(0).getGenre().size());
-*/        
         assertNull(movies.get(0).getDirector());
         assertEquals("Frederico Fellini", movies.get(1).getDirector());
+        assertEquals("Rosa Salazar (Alita)", movies.get(0).getCast().get(0));
+        assertEquals(5, movies.get(0).getCast().size());
         assertEquals(15.2, movies.get(0).getPopularity(), 0.001);
         assertEquals(12.5, movies.get(0).getVoteAverage(), 0.001);
         assertEquals(3L, (long)movies.get(0).getVoteCount());
