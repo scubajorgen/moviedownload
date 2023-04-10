@@ -5,6 +5,7 @@
  */
 package net.studioblueplanet.moviedownload;
 
+import java.time.LocalDateTime;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,11 +17,19 @@ public class Options
 {
     private final static    Logger  LOGGER              = LogManager.getLogger(Options.class);    
     private static final    String  MOVIEFILENAME       ="./movies.xlsx";
-    private static final    String  MOVIEBACKUPFILENAME ="./movies_backup.xlsx";
     public String                   filename            =MOVIEFILENAME;
-    public String                   backupFilename      =MOVIEBACKUPFILENAME;
+    public String                   backupFilename;
     public boolean                  forceOverwrite      =true;
     public boolean                  processAll          =false;
+    
+    
+    private Options()
+    {
+        LocalDateTime now=LocalDateTime.now();
+        backupFilename=String.format("%04d%02d%02d_%02d%02d%02d_movies_backup.xlsx", 
+                                         now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 
+                                         now.getHour(), now.getMinute(), now.getSecond());
+    }
     
     public static Options argsParser(String[] args)
     {
