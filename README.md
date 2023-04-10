@@ -29,7 +29,7 @@ java -jar MovieDownload.jar -f [input excel] -b [backup excel] -o [true/false] -
 ```
 
 * -f Defines the input file
-* -b The input file is updated, but before it is back upped for the case that the input file is destroyed
+* -b The input file is backuped to this file, but before it is back upped for the case that the input file is destroyed. If not defined, the software automatically generates a unique name.
 * -o Overwrite. By default once filled in fields are not overwritten. -o true overwrites.
 * -a Indicates to process only the records that have not succesfully been processed, or all (-a true)
 * -k API Key can optionally be passed. If not passed, the program tries to read it from apikey.txt
@@ -41,7 +41,7 @@ java -jar MovieDownload.jar
 
 This statement is equivalent to
 ```
-java -jar MovieDownload.jar -f movies.xslx -b movies_backup.xslx -o false -a false
+java -jar MovieDownload.jar -f movies.xslx -o false -a false
 ```
 
 It processes the example file enclosed.
