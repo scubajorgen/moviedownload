@@ -47,21 +47,6 @@ public class MovieDatabaseTest
     }
 
     /**
-     * Test of getInstance method, of class MovieDatabase.
-     */
-    @Test
-    public void testGetInstance()
-    {
-        System.out.println("getInstance");
-        MovieDatabase expResult = null;
-        MovieDatabase result = MovieDatabase.getInstance();
-        assertNotNull(result);
-        MovieDatabase result2 = MovieDatabase.getInstance();
-        assertEquals(result, result2);
-        
-    }
-
-    /**
      * Test of enrichMovie method, of class MovieDatabase.
      */
     @Test
@@ -71,7 +56,7 @@ public class MovieDatabaseTest
         Movie movie = new Movie();
         movie.setTitle("ghost in the shell");
         movie.setYear(1995);
-        MovieDatabase instance = MovieDatabase.getInstance();
+        MovieDatabase instance = new MovieDatabase(null);
         instance.enrichMovie(movie);
         assertEquals(3, movie.getGenre().size());
         assertEquals("Action", movie.getGenre().get(0));

@@ -92,7 +92,7 @@ public class MoviesTest
         instance.readMoviesExcel("src/test/resources/movies.xslx");
         List<Movie> movies=instance.getMovies();
         
-        instance.enrichMovies(true);
+        instance.enrichMovies(null, true);
     }
     
 }

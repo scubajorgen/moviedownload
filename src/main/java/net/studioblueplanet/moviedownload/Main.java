@@ -31,6 +31,7 @@ public class Main
         LOGGER.info("       -b <filename>    File the original file is backed up to. Default: movies_backup.xslx");
         LOGGER.info("       -o <true/false>  Force overwrite existing fields. Default: false");
         LOGGER.info("       -a <true/false>  Process all. Default: false");
+        LOGGER.info("       -k <API Key>     API key from themoviedb.org. Default: null. If not passed, it is read from apikey.txt");
         LOGGER.info("Example: java -jar moviedownload.jar -f movies.xlsx -b movies_backup.xslx -o true -a true");
     }
 
@@ -73,7 +74,7 @@ public class Main
             error=movies.readMoviesExcel(options.filename);
             if (!error)
             {
-                movies.enrichMovies(options.processAll);
+                movies.enrichMovies(options.apiKey, options.processAll);
                 movies.updateMovieSheet(options.forceOverwrite);
 
                 error=rename(options.filename, options.backupFilename);

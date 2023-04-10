@@ -314,15 +314,18 @@ public class Movies
     
     /**
      * Enrich the list of movies with data from the database
+     * @param apiKey Api key for the MovieDB. If null, it is read from 
+     *               the file apikey.txt
+     * @param processAll 
      */
-    public void enrichMovies(boolean processAll)
+    public void enrichMovies(String apiKey, boolean processAll)
     {
         int             i;
         MovieDatabase   db;
         Movie           movie;
         int             enrichCount;
         
-        db=MovieDatabase.getInstance();
+        db=new MovieDatabase(apiKey);
         
         i=0;
         enrichCount=0;

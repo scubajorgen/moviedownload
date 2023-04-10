@@ -18,7 +18,8 @@ public class Options
     private final static    Logger  LOGGER              = LogManager.getLogger(Options.class);    
     private static final    String  MOVIEFILENAME       ="./movies.xlsx";
     public String                   filename            =MOVIEFILENAME;
-    public String                   backupFilename;
+    public String                   backupFilename      =null;
+    public String                   apiKey              =null;
     public boolean                  forceOverwrite      =true;
     public boolean                  processAll          =false;
     
@@ -36,6 +37,7 @@ public class Options
         Options options;
         int     i;
         char    option;
+        String  value;
         
         if (args.length%2==0)
         {
@@ -45,11 +47,12 @@ public class Options
             {
                 if (args[i].startsWith("-"))
                 {
-                    option=args[i].charAt(1);
+                    option  =args[i].toLowerCase().charAt(1);
+                    value   =args[i+1].trim();
                     switch(option)
                     {
                         case 'o':
-                            if ("true".equals(args[i+1]))
+                            if ("true".equals(value))
                             {
                                 options.forceOverwrite=true;
                             }
@@ -59,7 +62,7 @@ public class Options
                             }
                             break;
                         case 'a':
-                            if ("true".equals(args[i+1]))
+                            if ("true".equals(value))
                             {
                                 options.processAll=true;
                             }
@@ -69,10 +72,13 @@ public class Options
                             }
                             break;
                         case 'f':
-                            options.filename=args[i+1].trim();
+                            options.filename=value;
                             break;
                         case 'b':
-                            options.backupFilename=args[i+1].trim();
+                            options.backupFilename=value;
+                            break;
+                        case 'k':
+                            options.apiKey=value;
                             break;
                     }
                 }

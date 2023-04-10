@@ -44,24 +44,21 @@ public class MovieDatabase
     
     
     /**
-     * Get the one and only singleton instance of this class
-     * @return The instance
-     */
-    public static MovieDatabase getInstance()
-    {
-        if (theInstance==null)
-        {
-            theInstance=new MovieDatabase();
-        }
-        return theInstance;
-    }
-
-    /**
      * Constructor
+     * @param apiKey API Key from the MovieDB. If null, the key is read from
+     *               file
      */
-    private MovieDatabase()
+    public MovieDatabase(String apiKey)
     {
-        readApiKeyFromFile();
+        if (apiKey!=null)
+        {
+            this.apiKey=apiKey;
+        }
+        else
+        {
+            readApiKeyFromFile();
+        }
+        LOGGER.info("Key: {}", this.apiKey);
         requestGenres();
     }
     
@@ -73,8 +70,9 @@ public class MovieDatabase
         BufferedReader reader;
         try
         {
+            LOGGER.info("Reading key from apikey.txt");
             reader=new BufferedReader(new FileReader("apikey.txt")); 
-            apiKey=reader.readLine();
+            apiKey=reader.readLine().trim();
         }
         catch (FileNotFoundException e)
         {
@@ -96,7 +94,7 @@ public class MovieDatabase
         {
             StringBuffer response    =sendGet(url);
             Gson g      =new Gson();
-            if (response.length()>0)
+            if (response!=null && response.length()>0)
             {
                 requestToken=g.fromJson(response.toString(), MovieDatabaseToken.class);
                 LOGGER.info("Token requested: {}, expiration {}", requestToken.success, requestToken.expires_at);
@@ -104,11 +102,13 @@ public class MovieDatabase
             else
             {
                 LOGGER.error("No response from database when requesting token");
+                System.exit(0);
             }
         }
         catch(IOException e)
         {
             LOGGER.error("Error on database requesting token: {}", e.getMessage());
+            System.exit(0);
         }        
     }
     
@@ -122,7 +122,7 @@ public class MovieDatabase
         {
             StringBuffer response    =sendGet(url);
             Gson g      =new Gson();
-            if (response.length()>0)
+            if (response!=null && response.length()>0)
             {
                 movieGenres=g.fromJson(response.toString(), MovieDatabaseGenres.class);
                 LOGGER.info("{} genres read", movieGenres.genres.size());
@@ -130,6 +130,7 @@ public class MovieDatabase
             else
             {
                 LOGGER.error("No response from database when requesting genres");
+                System.exit(0);
             }
         }
         catch(IOException e)
@@ -149,7 +150,7 @@ public class MovieDatabase
         {
             StringBuffer response    =sendGet(url);
             Gson g      =new Gson();
-            if (response.length()>0)
+            if (response!=null && response.length()>0)
             {
                 MovieDatabaseCredits credits=g.fromJson(response.toString(), MovieDatabaseCredits.class);
                 LOGGER.info("{} credits read", credits.cast.size());
@@ -187,6 +188,7 @@ public class MovieDatabase
             else
             {
                 LOGGER.error("No response from database when requesting credits");
+                System.exit(0);
             }
         }
         catch(IOException e)
@@ -223,7 +225,8 @@ public class MovieDatabase
         } 
         else 
         {
-            LOGGER.error("GET request did not work");
+            LOGGER.error("HTML GET request did not work: {}", responseCode);
+            response=null;
         }
         return response;
     }    
@@ -324,25 +327,33 @@ public class MovieDatabase
                 url         =queryUrl(movie.getTitle(), page);
                 response    =sendGet(url);
 
-                mdPage      =g.fromJson(response.toString(), MovieDatabasePage.class);
-                LOGGER.info("Page {} from {}, total results {}; parsing page of {} records", 
-                            mdPage.page, mdPage.total_pages, mdPage.total_results, mdPage.results.size());
-                
-                if (mdPage.results.size()>0)
+                if (response!=null)
                 {
-                    theRecord=findMovieByYear(mdPage.results, movie.getYear());
-                    if (theRecord==null)
+                    mdPage      =g.fromJson(response.toString(), MovieDatabasePage.class);
+                    LOGGER.info("Page {} from {}, total results {}; parsing page of {} records", 
+                                mdPage.page, mdPage.total_pages, mdPage.total_results, mdPage.results.size());
+
+                    if (mdPage.results.size()>0)
                     {
-                        LOGGER.info("Movie {} could not be identifed uniquely in the database", movie.getTitle());
-                        movie.setDatabaseRemark(STATUS_NOTIDENTIFYABLE);                        
+                        theRecord=findMovieByYear(mdPage.results, movie.getYear());
+                        if (theRecord==null)
+                        {
+                            LOGGER.info("Movie {} could not be identifed uniquely in the database", movie.getTitle());
+                            movie.setDatabaseRemark(STATUS_NOTIDENTIFYABLE);                        
+                        }
                     }
+                    else
+                    {
+                        LOGGER.info("Movie {} could not be found in the database", movie.getTitle());
+                        movie.setDatabaseRemark(STATUS_NOTFOUND);                    
+                    }
+                    totalPages  =mdPage.total_pages;
                 }
                 else
                 {
-                    LOGGER.info("Movie {} could not be found in the database", movie.getTitle());
-                    movie.setDatabaseRemark(STATUS_NOTFOUND);                    
+                    LOGGER.error("No response from database requesting movie info. Check key.");
+                    System.exit(0);
                 }
-                totalPages  =mdPage.total_pages;
                 page++;
             }
             if (theRecord!=null)
@@ -391,6 +402,7 @@ public class MovieDatabase
         catch(IOException e)
         {
             LOGGER.error("Error on database request: {}", e.getMessage());
+            System.exit(0);
         }
         return success;
     }
