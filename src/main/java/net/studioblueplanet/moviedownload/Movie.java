@@ -21,6 +21,7 @@ public class Movie
     private String                  releaseDate;
     private Integer                 year;
     private String                  folder;
+    private String                  subfolder;
     private String                  overview;
     private Integer                 id;
     private List<String>            genre;
@@ -98,6 +99,16 @@ public class Movie
     public void setFolder(String folder)
     {
         this.folder = folder;
+    }
+
+    public String getSubfolder()
+    {
+        return subfolder;
+    }
+
+    public void setSubfolder(String subfolder)
+    {
+        this.subfolder = subfolder;
     }
 
     public String getOverview()
