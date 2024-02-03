@@ -74,6 +74,7 @@ public class Main
             error=movies.readMoviesExcel(options.filename);
             if (!error)
             {
+                movies.findSubfolderNames("", options.processAll);
                 movies.enrichMovies(options.apiKey, options.processAll);
                 movies.updateMovieSheet(options.forceOverwrite);
 

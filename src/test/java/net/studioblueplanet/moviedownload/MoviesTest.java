@@ -86,7 +86,6 @@ public class MoviesTest
      * Test of readMoviesExcel method, of class Movies.
      */
     @Test
-//    @Ignore
     public void testEnrichMovies()
     {
         System.out.println("enrichMovies");
@@ -110,9 +109,9 @@ public class MoviesTest
         assertEquals("Tim Hopewell", newMovie.getDirector());
         assertEquals(29, newMovie.getCast().size());
         assertEquals("Joanna Lumley (Narrator (voice))", newMovie.getCast().get(0));
-        assertEquals(0.968, newMovie.getPopularity(), 0.001);
-        assertEquals(7.5, newMovie.getVoteAverage(), 0.1);
-        assertEquals(2, newMovie.getVoteCount().intValue());
+        assertEquals(1.4, newMovie.getPopularity(), 0.001);         // likely to change in future
+        assertEquals(7.5, newMovie.getVoteAverage(), 0.1);          // likely to change in future
+        assertEquals(2, newMovie.getVoteCount().intValue());        // likely to change in future
         assertEquals("7 Up & Me", newMovie.getOriginalTitle());
         assertEquals("7 Up & Me", newMovie.getTitleRetrieved());
         assertEquals("2019-06-03", newMovie.getReleaseDate());
@@ -132,5 +131,27 @@ public class MoviesTest
         assertEquals("Movie enriched", oldMovie.getDatabaseRemark());
         assertEquals("Lasse Hallström", oldMovie.getDirector());
     }
+    
+    /**
+     * Test of findSubfolders method, of class Movies.
+     */
+    @Test
+    public void testFindSubfolders()
+    {
+        System.out.println("findSubfolders");
+        Movies instance = new Movies();
+        instance.readMoviesExcel("src/test/resources/movies.xlsx");
+
+        List<Movie> movies=instance.getMovies();
+        instance.findSubfolderNames("src/test/resources", false);
+        assertEquals("subfolder", movies.get(0).getSubfolder());
+        assertEquals("A Clockwork Orange (1971)", movies.get(2).getSubfolder());
+
+        movies=instance.getMovies();
+        instance.findSubfolderNames("src/test/resources", true);
+        assertEquals("Alles is Familie (2012)", movies.get(0).getSubfolder());
+        assertEquals("A Clockwork Orange (1971)", movies.get(2).getSubfolder());
+    }
+    
     
 }

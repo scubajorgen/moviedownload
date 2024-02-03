@@ -5,16 +5,20 @@
  */
 package net.studioblueplanet.moviedownload;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileOutputStream;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -100,10 +104,6 @@ public class Movies
     private void parseMoviesSheet(Sheet sheet)
     {
         int         maxRow;
-        long        value;
-        String      typeName;
-        String      valueName;
-        Cell        cell;
         
         maxRow=sheet.getLastRowNum();
         for (int i=1; i<=maxRow; i++) 
@@ -202,15 +202,17 @@ public class Movies
      * @param value Value to update
      * @param forceOverwrite Force overwrite if the cell already contains a value
      */
-    private void updateCell(Row row, int column, Object value, boolean forceOverwrite)
+    private void updateCell(Workbook wb, int sheet, int row, int column, Object value, boolean forceOverwrite)
     {
-        Cell cell;
-        
-        cell=row.getCell(column);
+        Sheet   s   =workbook.getSheetAt(sheet);
+        Row     r   =s.getRow(row);
+        Cell    cell=r.getCell(column);
         if (cell==null)
         {
-            cell=row.createCell(column);
+            cell=r.createCell(column);
+            CellStyle style=s.getColumnStyle(column);
             setCellValue(cell, value);
+            cell.setCellStyle(style);
         }
         else
         {
@@ -223,28 +225,26 @@ public class Movies
     
     public void updateMovieSheet(boolean forceOverwrite)
     {
-        Sheet sheet=workbook.getSheetAt(0);
-        Cell  cell;
         Movie movie;
         
         int i=0;
         while (i<movies.size())
         {
-            Row  row=sheet.getRow(i+1);
             movie=movies.get(i);
-            updateCell(row, CELL_ORIGINAL_TITLE , movie.getOriginalTitle()  , forceOverwrite);
-            updateCell(row, CELL_TITLE_DB       , movie.getTitleRetrieved() , forceOverwrite);
-            updateCell(row, CELL_OVERVIEW       , movie.getOverview()       , forceOverwrite);
-            updateCell(row, CELL_DIRECTOR       , movie.getDirector()       , forceOverwrite);
-            updateCell(row, CELL_CAST           , movie.getCastString()     , forceOverwrite);
-            updateCell(row, CELL_POPULARITY     , movie.getPopularity()     , forceOverwrite);
-            updateCell(row, CELL_VOTE_AVERAGE   , movie.getVoteAverage()    , forceOverwrite);
-            updateCell(row, CELL_VOTE_COUNT     , movie.getVoteCount()      , forceOverwrite);
-            updateCell(row, CELL_RELEASE_DATE   , movie.getReleaseDate()    , forceOverwrite);
-            updateCell(row, CELL_REMARK_DB      , movie.getDatabaseRemark() , true);            // always update status
-            updateCell(row, CELL_IDENTIFIER_DB  , movie.getId()             , forceOverwrite);
-            updateCell(row, CELL_GENRES         , movie.getGenreString()    , forceOverwrite);
-            updateCell(row, CELL_MEDIA_TYPE     , movie.getMediaType()      , forceOverwrite);
+            updateCell(workbook, 0, i+1, CELL_ORIGINAL_TITLE , movie.getOriginalTitle()  , forceOverwrite);
+            updateCell(workbook, 0, i+1, CELL_TITLE_DB       , movie.getTitleRetrieved() , forceOverwrite);
+            updateCell(workbook, 0, i+1, CELL_OVERVIEW       , movie.getOverview()       , forceOverwrite);
+            updateCell(workbook, 0, i+1, CELL_DIRECTOR       , movie.getDirector()       , forceOverwrite);
+            updateCell(workbook, 0, i+1, CELL_CAST           , movie.getCastString()     , forceOverwrite);
+            updateCell(workbook, 0, i+1, CELL_POPULARITY     , movie.getPopularity()     , forceOverwrite);
+            updateCell(workbook, 0, i+1, CELL_VOTE_AVERAGE   , movie.getVoteAverage()    , forceOverwrite);
+            updateCell(workbook, 0, i+1, CELL_VOTE_COUNT     , movie.getVoteCount()      , forceOverwrite);
+            updateCell(workbook, 0, i+1, CELL_RELEASE_DATE   , movie.getReleaseDate()    , forceOverwrite);
+            updateCell(workbook, 0, i+1, CELL_REMARK_DB      , movie.getDatabaseRemark() , true);            // always update status
+            updateCell(workbook, 0, i+1, CELL_IDENTIFIER_DB  , movie.getId()             , forceOverwrite);
+            updateCell(workbook, 0, i+1, CELL_GENRES         , movie.getGenreString()    , forceOverwrite);
+            updateCell(workbook, 0, i+1, CELL_MEDIA_TYPE     , movie.getMediaType()      , forceOverwrite);
+            updateCell(workbook, 0, i+1, CELL_SUBFOLDER      , movie.getSubfolder()      , forceOverwrite);
 
             i++;
         }
@@ -323,18 +323,11 @@ public class Movies
      */
     public void enrichMovies(String apiKey, boolean processAll)
     {
-        int             i;
-        MovieDatabase   db;
-        Movie           movie;
-        int             enrichCount;
+        MovieDatabase db=new MovieDatabase(apiKey);
         
-        db=new MovieDatabase(apiKey);
-        
-        i=0;
-        enrichCount=0;
-        while (i<movies.size())
+        int enrichCount=0;
+        for (Movie movie : movies) 
         {
-            movie=movies.get(i);
             LOGGER.info("Processing movie {} ({})", movie.getTitle(), movie.getYear());
             if (!(MovieDatabase.STATUS_PROCESSED.equals(movie.getDatabaseRemark()) || 
                   MovieDatabase.STATUS_NOTUPDATED.equals(movie.getDatabaseRemark())) || processAll)
@@ -351,9 +344,77 @@ public class Movies
                 movie.setDatabaseRemark(MovieDatabase.STATUS_NOTUPDATED);
                 LOGGER.info("{} not enriched", movie.getTitle());
             }
-            i++;
         }
-        LOGGER.info("Movies processed {}. Movies successfully enriched {}", movies.size(), enrichCount);
+        LOGGER.info("Movies processed : {}. Movies successfully enriched: {}.", movies.size(), enrichCount);
+        LOGGER.info("_______________________________________________________");
+    }
+    
+    
+    /**
+     * 
+     * @return 
+     */
+    private boolean isMoreOrLessEqual(String s, String title, Integer year)
+    {
+        String cleanedTitle=title.replace(":", "");
+        cleanedTitle=cleanedTitle.trim();
+        cleanedTitle=cleanedTitle.replaceAll("\\s{2,}", " ");
+        String  assumedSubfolder    =cleanedTitle+" ("+year+")";
+        boolean isEqual=false;
+        if (s.toLowerCase().equals(assumedSubfolder.toLowerCase()))
+        {
+            isEqual=true;
+        }
+        return isEqual;
+    }
+    
+    /**
+     * This method tries to find the subfolder where the movie is stored
+     * based on the folder, the movie name and movie year.
+     * A subfolder name of [folder]/[title] ([year]) is assumed
+     * @param basePath Base pathf where to look for folders and subfolders
+     * @param processAll When true already defined subfolder names are overwritten by
+     *                   subfolder names, if found; when false, existing subfolder 
+     *                   names are not replaced
+     */
+    public void findSubfolderNames(String basePath, boolean processAll)
+    {
+        int     count               =0;
+        for (Movie movie : movies) 
+        {        
+            String  title               =movie.getTitle();
+            Integer year                =movie.getYear();
+            String  folder              =movie.getFolder();
+            String  subfolder           =movie.getSubfolder();
+            
+            if (title!=null && year !=null && folder!=null &&
+                (processAll || subfolder==null || subfolder.equals("")))
+            {
+                String  dir                 =basePath+"/"+folder+"/";
+                
+                File dirFile=new File(dir);
+                       
+                if (dirFile!=null && dirFile.listFiles()!=null)
+                {
+                    List<String> foundSubfolders= 
+                            Stream.of(dirFile.listFiles())
+                            .filter(file -> file.isDirectory())
+                            .map(File::getName)
+                            .collect(Collectors.toList());
+
+                    for (String s : foundSubfolders)
+                    {
+                        if (isMoreOrLessEqual(s, title, year))
+                        {
+                            movie.setSubfolder(s);
+                            LOGGER.info("Found: {}", s);
+                            count++;
+                        }
+                    }
+                }
+            }
+        }
+        LOGGER.info("Movies processed: {}. New subfolders added: {}.", movies.size(), count);
         LOGGER.info("_______________________________________________________");
     }
     
