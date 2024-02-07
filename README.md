@@ -8,17 +8,17 @@ It is rather quick and dirty, not many unit tests.
 A folder/file structure is assumed
 
 ```
-[folder 01]
-    [moviefolder 01]
-    [moviefolder 02]
-    ...
-  [subfolder NN]
-[folder 02]
-    _[folder01]
+[movie directory]
+    [folder 01]
         [moviefolder 01]
-    [moviefolder 01]
-  ...
-  movies.xlsx
+        [moviefolder 02]
+        ...
+        [moviefolder NN]
+    [folder 02]
+        _[folder01]
+        [moviefolder 01]
+        [moviefolder 02]
+        ...
 ```
 * ```[folder NN]``` can be arbitrary, e.g. a genrename
 * ```[moviefolder NN]``` is a folder in which movie video files are stored. The format is ```[moviename] ([year])```
@@ -48,7 +48,7 @@ mvn clean install
 To run the application
 
 ```
-java -jar MovieDownload.jar -c [command] -f [input excel] -b [backup excel] -o [true/false] -a [true/false] -k [API Key]
+java -jar MovieDownload.jar -c [command] -f [input excel] -b [backup excel] -o [true/false] -a [true/false] -k [API Key] -m [movie directory]
 ```
 
 * -c Defines the command: enrich, folders. ```enrich``` requests missing info from the Movie Database, ```folders``` fills in missing movie folders, given the name and year of the movie, ```crosscheck``` checks the excel sheet against the folderstructure and find missing names
@@ -57,6 +57,7 @@ java -jar MovieDownload.jar -c [command] -f [input excel] -b [backup excel] -o [
 * -o Overwrite. By default once filled in fields are not overwritten. -o true overwrites.
 * -a Indicates to process only the records that have not succesfully been processed, or all (-a true)
 * -k API Key can optionally be passed. If not passed, the program tries to read it from apikey.txt
+* -m Defines the base directory where movie files are stored
 
 Or simply
 ```
@@ -65,7 +66,7 @@ java -jar MovieDownload.jar
 
 This statement is equivalent to
 ```
-java -jar MovieDownload.jar -c enrich -f movies.xslx -o false -a false
+java -jar MovieDownload.jar -c enrich -f movies.xslx -o false -a false -m ./
 ```
 
 It processes the example file enclosed.
