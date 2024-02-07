@@ -30,6 +30,7 @@ public class Main
         LOGGER.info("       -c <command>     Command to execute: enrich, folders, crosscheck");
         LOGGER.info("       -f <filename>    Excel file to process. Default: movies.xlsx");
         LOGGER.info("       -b <filename>    File the original file is backed up to. Default: movies_backup.xslx");
+        LOGGER.info("       -m <directory>   Base directory where movies are to be found. Default: './'");
         LOGGER.info("       -o <true/false>  Force overwrite existing fields. Default: false");
         LOGGER.info("       -a <true/false>  Process all. Default: false");
         LOGGER.info("       -k <API Key>     API key from themoviedb.org. Default: null. If not passed, it is read from apikey.txt");
@@ -67,12 +68,17 @@ public class Main
         LOGGER.info("MOVIE DATABASE DOWNLOAD UTILITY");
 
         options=Options.argsParser(args);
+        options.dumpOptions();
 
         if (options!=null && options.command!=null)
         {
             Movies movies=new Movies();
 
             error=movies.readMoviesExcel(options.filename);
+            
+            LOGGER.info("{} movies read from Excel", movies.getMovies().size());
+            
+            
             if (!error)
             {
                 switch(options.command)
@@ -91,7 +97,7 @@ public class Main
                         }
                         break;
                     case "folders":
-                        movies.findSubfolderNames("", options.processAll);
+                        movies.findSubfolderNames(options.movieDirectory, options.processAll);
                         movies.updateMovieSheet(options.forceOverwrite);
                         error=rename(options.filename, options.backupFilename);
                         if (!error)
@@ -104,7 +110,7 @@ public class Main
                         }
                         break;
                     case "crosscheck":
-                        movies.crossCheck();
+                        movies.crossCheck(options.movieDirectory);
                         break;
                 }
             }

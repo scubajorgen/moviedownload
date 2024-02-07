@@ -17,8 +17,9 @@ public class Options
 {
     private final static    Logger  LOGGER              = LogManager.getLogger(Options.class);    
     private static final    String  MOVIEFILENAME       ="./movies.xlsx";
-    public String                   command             =null;
+    public String                   command             ="enrich";
     public String                   filename            =MOVIEFILENAME;
+    public String                   movieDirectory      ="./";
     public String                   backupFilename      =null;
     public String                   apiKey              =null;
     public boolean                  forceOverwrite      =true;
@@ -33,6 +34,11 @@ public class Options
                                          now.getHour(), now.getMinute(), now.getSecond());
     }
     
+    /**
+     * Parse arguments into options
+     * @param args The arguments 
+     * @return An Options object
+     */
     public static Options argsParser(String[] args)
     {
         Options options;
@@ -84,6 +90,14 @@ public class Options
                         case 'k':
                             options.apiKey=value;
                             break;
+                        case 'm':
+                            options.movieDirectory=value;
+                            if (!options.movieDirectory.endsWith("/") && 
+                                !options.movieDirectory.endsWith("\\"))
+                            {
+                                options.movieDirectory+="/";
+                            }
+                            break;
                     }
                 }
                 else
@@ -101,4 +115,19 @@ public class Options
         }
         return options;
     }    
+    
+    /**
+     * Show options
+     */
+    public void dumpOptions()
+    {
+        LOGGER.info("OPTIONS: ");
+        LOGGER.info("- command          {}", command);
+        LOGGER.info("- filename         {}", filename);
+        LOGGER.info("- movie directory  {}", movieDirectory);
+        LOGGER.info("- foce overwrite   {}", forceOverwrite);
+        LOGGER.info("- process all      {}", processAll);
+        LOGGER.info("- backup file      {}", backupFilename);
+        LOGGER.info("- api key          {}", apiKey);
+    }
 }

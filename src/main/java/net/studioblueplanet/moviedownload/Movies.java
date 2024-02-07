@@ -423,10 +423,10 @@ public class Movies
      * and the actual folders in the storage directory.
      * @return The cross check
      */
-    public FolderCrossCheck crossCheck()
+    public FolderCrossCheck crossCheck(String basePath)
     {
         FolderCrossCheck checker=new FolderCrossCheck();
-        checker.crossCheck(movies);
+        checker.crossCheck(movies, basePath);
         return checker;
     }
     
@@ -437,6 +437,18 @@ public class Movies
     public List<Movie> getMovies()
     {
         return movies;
+    }
+    
+    /**
+     * Add Movie to the list of movies
+     * @param movie Movie to add
+     */
+    public void addMovie(Movie movie)
+    {
+        if (movie!=null)
+        {
+            movies.add(movie);
+        }
     }
 
     

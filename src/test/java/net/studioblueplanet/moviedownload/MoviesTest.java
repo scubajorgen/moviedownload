@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
 
 /**
  *
@@ -58,7 +57,7 @@ public class MoviesTest
         Movies instance = new Movies();
         instance.readMoviesExcel("src/test/resources/movies.xlsx");
         List<Movie> movies=instance.getMovies();
-        assertEquals(5, movies.size());
+        assertEquals(7, movies.size());
         assertEquals("Alles is familie", movies.get(0).getTitle());
         assertEquals(2012L, (long)movies.get(0).getYear());
         assertEquals("comedy", movies.get(0).getFolder());
@@ -95,8 +94,8 @@ public class MoviesTest
         
         instance.enrichMovies(null, false);
         
-        assertEquals(5, movies.size());
-        Movie newMovie=movies.get(4);
+        assertEquals(7, movies.size());
+        Movie newMovie=movies.get(5);
 
         assertEquals("In celebration of the release of 63 Up, the 2019 installment of Michael Apted's groundbreaking "+
                      "documentary series that began in 1964, a number of British and American celebrity fans now "+
@@ -109,7 +108,7 @@ public class MoviesTest
         assertEquals("Tim Hopewell", newMovie.getDirector());
         assertEquals(29, newMovie.getCast().size());
         assertEquals("Joanna Lumley (Narrator (voice))", newMovie.getCast().get(0));
-        assertEquals(1.4, newMovie.getPopularity(), 0.001);         // likely to change in future
+        assertEquals(2.004, newMovie.getPopularity(), 0.001);       // likely to change in future
         assertEquals(7.5, newMovie.getVoteAverage(), 0.1);          // likely to change in future
         assertEquals(2, newMovie.getVoteCount().intValue());        // likely to change in future
         assertEquals("7 Up & Me", newMovie.getOriginalTitle());
@@ -162,9 +161,9 @@ public class MoviesTest
         System.out.println("crossCheck");
         Movies instance = new Movies();
         instance.readMoviesExcel("src/test/resources/movies.xlsx");
-        FolderCrossCheck check=instance.crossCheck();
+        FolderCrossCheck check=instance.crossCheck("");
         
-        assertEquals(3, check.getFolderCount());
+        assertEquals(4, check.getFolderCount());
     }
 
 
