@@ -27,6 +27,7 @@ public class Main
     private static void printHelp()
     {
         LOGGER.info("Usage: java -jar GalleryGenerator.jar <options>");
+        LOGGER.info("       -c <command>     Command to execute: enrich, folders, crosscheck");
         LOGGER.info("       -f <filename>    Excel file to process. Default: movies.xlsx");
         LOGGER.info("       -b <filename>    File the original file is backed up to. Default: movies_backup.xslx");
         LOGGER.info("       -o <true/false>  Force overwrite existing fields. Default: false");
@@ -67,26 +68,44 @@ public class Main
 
         options=Options.argsParser(args);
 
-        if (options!=null)
+        if (options!=null && options.command!=null)
         {
             Movies movies=new Movies();
 
             error=movies.readMoviesExcel(options.filename);
             if (!error)
             {
-                movies.findSubfolderNames("", options.processAll);
-                movies.enrichMovies(options.apiKey, options.processAll);
-                movies.updateMovieSheet(options.forceOverwrite);
-
-                error=rename(options.filename, options.backupFilename);
-
-                if (!error)
+                switch(options.command)
                 {
-                    movies.writeMoviesToExcel(options.filename);
-                }
-                else
-                {
-                    LOGGER.error("File not written because original could not be backed up");
+                    case "enrich":
+                        movies.enrichMovies(options.apiKey, options.processAll);
+                        movies.updateMovieSheet(options.forceOverwrite);
+                        error=rename(options.filename, options.backupFilename);
+                        if (!error)
+                        {
+                            movies.writeMoviesToExcel(options.filename);
+                        }
+                        else
+                        {
+                            LOGGER.error("File not written because original could not be backed up");
+                        }
+                        break;
+                    case "folders":
+                        movies.findSubfolderNames("", options.processAll);
+                        movies.updateMovieSheet(options.forceOverwrite);
+                        error=rename(options.filename, options.backupFilename);
+                        if (!error)
+                        {
+                            movies.writeMoviesToExcel(options.filename);
+                        }
+                        else
+                        {
+                            LOGGER.error("File not written because original could not be backed up");
+                        }
+                        break;
+                    case "crosscheck":
+                        movies.crossCheck();
+                        break;
                 }
             }
             else

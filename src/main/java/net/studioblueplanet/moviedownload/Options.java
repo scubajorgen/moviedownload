@@ -17,6 +17,7 @@ public class Options
 {
     private final static    Logger  LOGGER              = LogManager.getLogger(Options.class);    
     private static final    String  MOVIEFILENAME       ="./movies.xlsx";
+    public String                   command             =null;
     public String                   filename            =MOVIEFILENAME;
     public String                   backupFilename      =null;
     public String                   apiKey              =null;
@@ -70,6 +71,9 @@ public class Options
                             {
                                 options.processAll=false;
                             }
+                            break;
+                        case 'c':
+                            options.command=value;
                             break;
                         case 'f':
                             options.filename=value;

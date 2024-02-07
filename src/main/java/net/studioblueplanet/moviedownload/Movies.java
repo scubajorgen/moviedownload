@@ -419,6 +419,18 @@ public class Movies
     }
     
     /**
+     * This method performs a cross check between the movies in the database
+     * and the actual folders in the storage directory.
+     * @return The cross check
+     */
+    public FolderCrossCheck crossCheck()
+    {
+        FolderCrossCheck checker=new FolderCrossCheck();
+        checker.crossCheck(movies);
+        return checker;
+    }
+    
+    /**
      * Return the list of movies read
      * @return List of movies
      */

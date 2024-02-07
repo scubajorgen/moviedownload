@@ -151,7 +151,23 @@ public class MoviesTest
         instance.findSubfolderNames("src/test/resources", true);
         assertEquals("Alles is Familie (2012)", movies.get(0).getSubfolder());
         assertEquals("A Clockwork Orange (1971)", movies.get(2).getSubfolder());
+    }    
+    
+    /**
+     * Test of findSubfolders method, of class Movies.
+     */
+    @Test
+    public void testCrossCheck()
+    {
+        System.out.println("crossCheck");
+        Movies instance = new Movies();
+        instance.readMoviesExcel("src/test/resources/movies.xlsx");
+        FolderCrossCheck check=instance.crossCheck();
+        
+        assertEquals(3, check.getFolderCount());
     }
+
+
     
     
 }
