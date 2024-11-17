@@ -97,6 +97,8 @@ public class MoviesTest
         assertEquals(7, movies.size());
         Movie newMovie=movies.get(5);
 
+        // This data was returned from the Movie Database 2024-11-17 and it may change over time, letting the test fail
+        // To do: improve test to best practices
         assertEquals("In celebration of the release of 63 Up, the 2019 installment of Michael Apted's groundbreaking "+
                      "documentary series that began in 1964, a number of British and American celebrity fans now "+
                      "discuss its impact on popular culture and its lasting legacy. The film also candidly explores "+
@@ -105,10 +107,10 @@ public class MoviesTest
                      "parenting.", newMovie.getOverview());
         assertEquals(1, newMovie.getGenre().size());
         assertEquals("Documentary", newMovie.getGenre().get(0));
-        assertEquals("Tim Hopewell", newMovie.getDirector());
+        assertEquals("John Piper", newMovie.getDirector());
         assertEquals(29, newMovie.getCast().size());
         assertEquals("Joanna Lumley (Narrator (voice))", newMovie.getCast().get(0));
-        assertEquals(2.004, newMovie.getPopularity(), 0.001);       // likely to change in future
+        assertEquals(1.064, newMovie.getPopularity(), 0.001);       // likely to change in future
         assertEquals(7.5, newMovie.getVoteAverage(), 0.1);          // likely to change in future
         assertEquals(2, newMovie.getVoteCount().intValue());        // likely to change in future
         assertEquals("7 Up & Me", newMovie.getOriginalTitle());
