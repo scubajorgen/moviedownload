@@ -53,6 +53,12 @@ public class FolderCrossCheck
             String folderName   =movie.getFolder();
             String subfolderName=movie.getSubfolder();
             
+            if (folderName==null)
+            {
+                System.out.println("No folder name defined for '"+movie.getTitle()+"'. Define folder or '-' if not known yet.");
+                System.exit(0);
+            }
+            
             FolderContents folderContents=dirList.get(folderName);
             if (folderContents==null)
             {
