@@ -78,6 +78,7 @@ public class MoviesTest
         assertEquals("Movie not updated", movies.get(0).getDatabaseRemark());
         assertEquals(1, movies.get(0).getId().intValue());
         assertEquals("movie", movies.get(0).getMediaType());
+        assertEquals("Check!", movies.get(6).getCheck());
     
     }
 
@@ -107,10 +108,10 @@ public class MoviesTest
                      "parenting.", newMovie.getOverview());
         assertEquals(1, newMovie.getGenre().size());
         assertEquals("Documentary", newMovie.getGenre().get(0));
-        assertEquals("John Piper", newMovie.getDirector());
+        assertEquals("Tim Hopewell", newMovie.getDirector());
         assertEquals(29, newMovie.getCast().size());
         assertEquals("Joanna Lumley (Narrator (voice))", newMovie.getCast().get(0));
-        assertEquals(1.064, newMovie.getPopularity(), 0.001);       // likely to change in future
+        assertEquals(2.7982, newMovie.getPopularity(), 0.001);       // likely to change in future
         assertEquals(7.5, newMovie.getVoteAverage(), 0.1);          // likely to change in future
         assertEquals(2, newMovie.getVoteCount().intValue());        // likely to change in future
         assertEquals("7 Up & Me", newMovie.getOriginalTitle());

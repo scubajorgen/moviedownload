@@ -34,6 +34,7 @@ public class Movie
     private String                  remark;
     private String                  databaseRemark;
     private String                  mediaType;
+    private String                  check;
 
     public Movie()
     {
@@ -275,5 +276,15 @@ public class Movie
         }
         return castString;
     }    
+
+    public String getCheck()
+    {
+        return check;
+    }
+
+    public void setCheck(String check)
+    {
+        this.check = check;
+    }
 
 }

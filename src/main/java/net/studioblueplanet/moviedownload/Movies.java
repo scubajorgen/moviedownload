@@ -36,21 +36,22 @@ public class Movies
     private static final    int                 CELL_YEAR           =1;
     private static final    int                 CELL_FOLDER         =2;
     private static final    int                 CELL_SUBFOLDER      =3;
-    private static final    int                 CELL_OVERVIEW       =4;
-    private static final    int                 CELL_GENRES         =5;
-    private static final    int                 CELL_DIRECTOR       =6;
-    private static final    int                 CELL_CAST           =7;
-    private static final    int                 CELL_POPULARITY     =8;
-    private static final    int                 CELL_VOTE_AVERAGE   =9;
-    private static final    int                 CELL_VOTE_COUNT     =10;
-    private static final    int                 CELL_RATING         =11;
-    private static final    int                 CELL_REMARK         =12;
-    private static final    int                 CELL_TITLE_DB       =13;
-    private static final    int                 CELL_ORIGINAL_TITLE =14;
-    private static final    int                 CELL_RELEASE_DATE   =15;
-    private static final    int                 CELL_REMARK_DB      =16;
-    private static final    int                 CELL_IDENTIFIER_DB  =17;
-    private static final    int                 CELL_MEDIA_TYPE     =18;
+    private static final    int                 CELL_CHECK          =4;
+    private static final    int                 CELL_OVERVIEW       =5;
+    private static final    int                 CELL_GENRES         =6;
+    private static final    int                 CELL_DIRECTOR       =7;
+    private static final    int                 CELL_CAST           =8;
+    private static final    int                 CELL_POPULARITY     =9;
+    private static final    int                 CELL_VOTE_AVERAGE   =10;
+    private static final    int                 CELL_VOTE_COUNT     =11;
+    private static final    int                 CELL_RATING         =12;
+    private static final    int                 CELL_REMARK         =13;
+    private static final    int                 CELL_TITLE_DB       =14;
+    private static final    int                 CELL_ORIGINAL_TITLE =15;
+    private static final    int                 CELL_RELEASE_DATE   =16;
+    private static final    int                 CELL_REMARK_DB      =17;
+    private static final    int                 CELL_IDENTIFIER_DB  =18;
+    private static final    int                 CELL_MEDIA_TYPE     =19;
 
     private final static    Logger              LOGGER = LogManager.getLogger(Movies.class);
     private final           List<Movie>         movies;
@@ -118,8 +119,10 @@ public class Movies
                 movie.setYear((Integer)getCellValue(row, CELL_YEAR, true));
                 // Folder
                 movie.setFolder((String)getCellValue(row, CELL_FOLDER, false));
-                // Folder
+                // Sub folder
                 movie.setSubfolder((String)getCellValue(row, CELL_SUBFOLDER, false));
+                // Check
+                movie.setCheck((String)getCellValue(row, CELL_CHECK, false));
                 // Overview
                 movie.setOverview((String)getCellValue(row, CELL_OVERVIEW, false));
                 // Genres
